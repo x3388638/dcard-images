@@ -25,15 +25,19 @@ const PubSub = (() => {
 	}
 
 	return {
-		on: on,
-		emit: emit
+		on,
+		emit
 	}
 })();
 
 (() => {
+	const _scripts = [
+		'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js'
+	];
 	const _commentUnit = 30;
 	const _galleryBack = document.createElement('div');
 	const _galleryImg = document.createElement('img');
+	const _galleryNum = document.createElement('span');
 	const _galleryTitle = document.createElement('span');
 	const _galleryNext = document.createElement('span');
 	const _galleryPrev = document.createElement('span');
@@ -51,7 +55,13 @@ const PubSub = (() => {
 		_URLCheck();
 	}
 
-	function _addScript() {}
+	function _addScript() {
+		_scripts.forEach((s) => {
+			const script = document.createElement('script');
+			script.src = s;
+			document.getElementById('root').appendChild(script);
+		});
+	}
 
 	function _addStyle() {
 		const style = document.createElement('style');
@@ -86,14 +96,23 @@ const PubSub = (() => {
 				width: 100%
 			}
 
-			.DcardImages__title {
+			.DcardImages__num {
 				position: absolute;
 				top: 20px;
 				left: 20px;
-				background: #f3f3f3;
+				color: #f3f3f3;
+				display: inline-block;
+				border-radius: 20px;
+				font-weight: bold;
+			}
+
+			.DcardImages__title {
+				position: absolute;
+				top: 60px;
+				left: 0;
+				background: #fafafab3;
 				display: inline-block;
 				padding: 5px 20px;
-				border-radius: 20px;
 				font-weight: bold;
 			}
 
@@ -104,6 +123,7 @@ const PubSub = (() => {
 				font-size: 60px;
 				color: #f3f3f3;
 				cursor: pointer;
+				opacity: 0.1
 			}
 
 			.DcardImages__prevBtn {
@@ -113,6 +133,12 @@ const PubSub = (() => {
 				font-size: 60px;
 				color: #f3f3f3;
 				cursor: pointer;
+				opacity: 0.1
+			}
+
+			.DcardImages__nextBtn:hover,
+			.DcardImages__prevBtn:hover {
+				opacity: 1;
 			}
 		`;
 
@@ -122,14 +148,15 @@ const PubSub = (() => {
 	function _initGallery() {
 		_galleryBack.setAttribute('class', 'DcardImages__galleryBack');
 		_galleryImg.setAttribute('class', 'DcardImages__img');
+		_galleryNum.setAttribute('class', 'DcardImages__num');
 		_galleryTitle.setAttribute('class', 'DcardImages__title');
 
 		_galleryNext.setAttribute('class', 'DcardImages__nextBtn');
-		_galleryNext.innerText = '>';
+		_galleryNext.innerText = '〉';
 		_galleryNext.addEventListener('click', _handleNext);
 
 		_galleryPrev.setAttribute('class', 'DcardImages__prevBtn');
-		_galleryPrev.innerText = '<';
+		_galleryPrev.innerText = '〈';
 		_galleryPrev.addEventListener('click', _handlePrev);
 
 		_galleryClose.innerHTML = '&times;';
@@ -137,6 +164,7 @@ const PubSub = (() => {
 		_galleryClose.addEventListener('click', _handleClose);
 
 		_galleryBack.appendChild(_galleryImg);
+		_galleryBack.appendChild(_galleryNum);
 		_galleryBack.appendChild(_galleryTitle);
 		_galleryBack.appendChild(_galleryNext);
 		_galleryBack.appendChild(_galleryPrev);
@@ -193,9 +221,15 @@ const PubSub = (() => {
 				data.media.forEach(m => {
 					_images.push({
 						floor: 0,
+						createdAt: data.createdAt,
+						school: data.school || '匿名',
+						department: data.department || '',
+						gender: data.gender,
 						imgHash: m.url.match(/http[s]?:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.[jpg|png]/)[1]
 					});
 				});
+
+				console.log(_images);
 
 				Promise.all([...new Array(Math.ceil(data.commentCount / _commentUnit))].map((val, i) => {
 					return new Promise((resolve) => {
@@ -211,11 +245,15 @@ const PubSub = (() => {
 					commentSetArr.forEach((comments) => {
 						comments.forEach((comment) => {
 							const regex = /http[s]?:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.[jpg|png]/g;
-							const content = comment.content;
 							let match;
-							while (match = regex.exec(content)) {
+							while (match = regex.exec(comment.content)) {
 								_images.push({
 									floor: comment.floor,
+									host: comment.host ? '原PO - ' : '',
+									createdAt: comment.createdAt,
+									school: comment.school || '匿名',
+									department: comment.department || '',
+									gender: comment.gender,
 									imgHash: match[1]
 								});
 							}
@@ -241,7 +279,11 @@ const PubSub = (() => {
 
 	function _renderImage(index) {
 		_galleryImg.setAttribute('src', `https://imgur.dcard.tw/${ _images[index].imgHash }.jpg`);
-		_galleryTitle.innerText = `B${ _images[index].floor } - ${ index + 1 }/${ _images.length }`;
+		_galleryNum.innerText = `${ index + 1 }/${ _images.length }`;
+		_galleryTitle.innerHTML = `
+			${ _images[index].host || '' }${ _images[index].school } ${ _images[index].department }<br />
+			B${ _images[index].floor } | ${ moment(_images[index].createdAt).utc(8).format('M月DD日 HH:mm') }
+		`;
 	}
 
 	function _handleNext() {
