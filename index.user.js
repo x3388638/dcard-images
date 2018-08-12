@@ -136,8 +136,10 @@ const PubSub = (() => {
 
 	function _handleURLChange() {
 		PubSub.on('URLChange', () => {
-			if (!!document.querySelectorAll('link[rel=canonical]')[0].href.match(/\/(\d*$)/)) {
+			if (!!document.querySelectorAll('link[rel=canonical]')[0].href.match(/\/(\d*$)/) &&
+				!document.querySelectorAll('.DcardImages').length) {
 				const btn = document.createElement('button');
+				btn.setAttribute('class', 'DcardImages');
 				btn.innerText = '瀏覽圖片';
 				btn.style.fontSize = '12px';
 				btn.style.lineHeight = '12px';
