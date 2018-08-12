@@ -43,9 +43,11 @@ const PubSub = (() => {
 	let _images = [];
 	let _currentImg = 0;
 
-	_initGallery();
-	_handleURLChange();
-	_URLCheck();
+	window.onload = function () {
+		_initGallery();
+		_handleURLChange();
+		_URLCheck();
+	}
 
 	function _initGallery() {
 		_galleryBack.style.position = 'fixed';
