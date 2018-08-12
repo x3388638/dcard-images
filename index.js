@@ -43,8 +43,18 @@ const PubSub = (() => {
 		_galleryImg.style.objectFit = 'contain';
 		_galleryImg.style.height = '100%';
 		_galleryImg.style.width = '100%';
+
+		_galleryTitle.style.position = 'absolute';
+		_galleryTitle.style.top = '20px';
+		_galleryTitle.style.left = '20px';
+		_galleryTitle.style.background = '#f3f3f3';
+		_galleryTitle.style.display = 'inline-block';
+		_galleryTitle.style.padding = '5px 20px';
+		_galleryTitle.style.borderRadius = '20px';
+		_galleryTitle.style.fontWeight = 'bold';
 		
 		_galleryBack.appendChild(_galleryImg);
+		_galleryBack.appendChild(_galleryTitle);
 		document.getElementById('root').appendChild(_galleryBack);
 	}
 
@@ -113,6 +123,7 @@ const PubSub = (() => {
 
 	function _renderImage(index) {
 		_galleryImg.setAttribute('src', _images[index].img);
+		_galleryTitle.innerText = `B${ _images[index].floor }`;
 		// _galleryImg.load();
 	}
 })();
