@@ -1,3 +1,13 @@
+// ==UserScript==
+// @name         dcard-images
+// @namespace    dcard-images
+// @version      0.1.0
+// @description  Dcard gallery for all images in the article and comments
+// @author       Y.Y.
+// @match        https://www.dcard.tw/*
+// @grant        none
+// ==/UserScript==
+
 const PubSub = (() => {
 	const _events = {};
 
@@ -63,7 +73,7 @@ const PubSub = (() => {
 		_galleryNext.style.color = '#f3f3f3';
 		_galleryNext.style.cursor = 'pointer';
 		_galleryNext.addEventListener('click', _handleNext);
-		
+
 		_galleryPrev.innerText = '<';
 		_galleryPrev.style.position = 'absolute';
 		_galleryPrev.style.left = '5vw';
@@ -190,11 +200,10 @@ const PubSub = (() => {
 	function _renderImage(index) {
 		_galleryImg.setAttribute('src', `https://imgur.dcard.tw/${ _images[index].imgHash }.jpg`);
 		_galleryTitle.innerText = `B${ _images[index].floor } - ${ index + 1 }/${ _images.length }`;
-		// _galleryImg.load();
 	}
 
 	function _handleNext() {
-		_currentImg ++;
+		_currentImg++;
 		if (!_images[_currentImg]) {
 			_currentImg = 0;
 		}
