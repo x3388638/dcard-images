@@ -121,14 +121,17 @@ const PubSub = (() => {
 				})).then((commentSetArr) => {
 					commentSetArr.forEach((comments) => {
 						comments.forEach((comment) => {
-							const match = comment.content ? comment.content.match(/https:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.jpg/) : null;
-							if (!!match) {
+							const regex = /https:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.jpg/g;
+							const content = comment.content;
+							const imgs = [];
+							let match;
+							while (match = regex.exec(content)) {
 								_images.push({
 									floor: comment.floor,
 									imgHash: match[1]
 								});
 							}
-						})
+						});
 					});
 
 					_renderGallery();
