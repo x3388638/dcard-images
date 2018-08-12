@@ -22,6 +22,8 @@ const PubSub = (() => {
 	const _galleryBack = document.createElement('div');
 	const _galleryImg = document.createElement('img');
 	const _galleryTitle = document.createElement('span');
+	const _galleryNext = document.createElement('span');
+	const _galleryPrev = document.createElement('span');
 	let _pastURL = '';
 	let _images = [];
 	let _currentImg = 0;
@@ -52,9 +54,29 @@ const PubSub = (() => {
 		_galleryTitle.style.padding = '5px 20px';
 		_galleryTitle.style.borderRadius = '20px';
 		_galleryTitle.style.fontWeight = 'bold';
+
+		_galleryNext.innerText = '>';
+		_galleryNext.style.position = 'absolute';
+		_galleryNext.style.right = '5vw';
+		_galleryNext.style.top = '45vh';
+		_galleryNext.style.fontSize = '60px';
+		_galleryNext.style.color = '#f3f3f3';
+		_galleryNext.style.cursor = 'pointer';
+		_galleryNext.addEventListener('click', _handleNext);
 		
+		_galleryPrev.innerText = '<';
+		_galleryPrev.style.position = 'absolute';
+		_galleryPrev.style.left = '5vw';
+		_galleryPrev.style.top = '45vh';
+		_galleryPrev.style.fontSize = '60px';
+		_galleryPrev.style.color = '#f3f3f3';
+		_galleryPrev.style.cursor = 'pointer';
+		_galleryPrev.addEventListener('click', _handlePrev);
+
 		_galleryBack.appendChild(_galleryImg);
 		_galleryBack.appendChild(_galleryTitle);
+		_galleryBack.appendChild(_galleryNext);
+		_galleryBack.appendChild(_galleryPrev);
 		document.getElementById('root').appendChild(_galleryBack);
 	}
 
@@ -88,7 +110,7 @@ const PubSub = (() => {
 				data.media.forEach(m => {
 					_images.push({
 						floor: 0,
-						img: m.url
+						imgHash: m.url.match(/https:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.jpg/)[1]
 					});
 				});
 
@@ -99,12 +121,12 @@ const PubSub = (() => {
 				})).then((commentSetArr) => {
 					commentSetArr.forEach((comments) => {
 						comments.forEach((comment) => {
-							const match = comment.content ? comment.content.match(/https:\/\/i\.imgur\.com\/[A-Za-z0-9]*\.jpg/) : null;
+							const match = comment.content ? comment.content.match(/https:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.jpg/) : null;
 							if (!!match) {
 								_images.push({
 									floor: comment.floor,
-									img: match[0]
-								})
+									imgHash: match[1]
+								});
 							}
 						})
 					});
@@ -116,14 +138,36 @@ const PubSub = (() => {
 	}
 
 	function _renderGallery() {
+		if (!_images.length) {
+			return;
+		}
+
 		_galleryBack.style.display = 'block';
 		_currentImg = 0;
 		_renderImage(_currentImg);
 	}
 
 	function _renderImage(index) {
-		_galleryImg.setAttribute('src', _images[index].img);
+		_galleryImg.setAttribute('src', `https://imgur.dcard.tw/${ _images[index].imgHash }.jpg`);
 		_galleryTitle.innerText = `B${ _images[index].floor }`;
 		// _galleryImg.load();
+	}
+
+	function _handleNext() {
+		_currentImg ++;
+		if (!_images[_currentImg]) {
+			_currentImg = 0;
+		}
+
+		_renderImage(_currentImg);
+	}
+
+	function _handlePrev() {
+		_currentImg--;
+		if (_currentImg < 0) {
+			_currentImg = _images.length - 1;
+		}
+
+		_renderImage(_currentImg);
 	}
 })();
