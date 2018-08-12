@@ -19,11 +19,24 @@ const PubSub = (() => {
 
 (() => {
 	const _commentUnit = 30;
+	const _galleryBack = document.createElement('div');
 	let _pastURL = '';
 	let _images = [];
 
+	_initGallery();
 	_handleURLChange();
 	_URLCheck();
+
+	function _initGallery() {
+		_galleryBack.style.position = 'fixed';
+		_galleryBack.style.height = '100vh';
+		_galleryBack.style.width = '100vw';
+		_galleryBack.style.background = 'rgba(0,0,0,.9)';
+		_galleryBack.style.zIndex = '20020';
+		_galleryBack.style.display = 'none';
+
+		document.getElementById('root').appendChild(_galleryBack);
+	}
 
 	function _URLCheck() {
 		setInterval(() => {
@@ -77,13 +90,14 @@ const PubSub = (() => {
 						})
 					});
 
-					_renderImages();
+					_renderGallery();
 				});
 			});
 		}
 	}
 
-	function _renderImages() {
+	function _renderGallery() {
 		console.log(_images);
+		_galleryBack.style.display = 'block';
 	}
 })();
