@@ -85,7 +85,7 @@ const PubSub = (() => {
 				position: fixed;
 				height: 100vh;
 				width: 100vw;
-				background: rgba(0,0,0,.9);
+				background: rgba(0,0,0,.95);
 				z-index: 20020;
 				display: none;
 			}
@@ -114,6 +114,26 @@ const PubSub = (() => {
 				display: inline-block;
 				padding: 5px 20px;
 				font-weight: bold;
+			}
+
+			.DcardImages__title--female {
+				position: absolute;
+				top: 60px;
+				left: 0;
+				display: inline-block;
+				padding: 5px 20px;
+				font-weight: bold;
+				background: #f48fb1;
+			}
+
+			.DcardImages__title--male {
+				position: absolute;
+				top: 60px;
+				left: 0;
+				display: inline-block;
+				padding: 5px 20px;
+				font-weight: bold;
+				background: #81d4fa;
 			}
 
 			.DcardImages__nextBtn {
@@ -229,8 +249,6 @@ const PubSub = (() => {
 					});
 				});
 
-				console.log(_images);
-
 				Promise.all([...new Array(Math.ceil(data.commentCount / _commentUnit))].map((val, i) => {
 					return new Promise((resolve) => {
 						fetch(`/_api/posts/${ postID }/comments?after=${ i * _commentUnit }`).then(res => {
@@ -280,6 +298,12 @@ const PubSub = (() => {
 	function _renderImage(index) {
 		_galleryImg.setAttribute('src', `https://imgur.dcard.tw/${ _images[index].imgHash }.jpg`);
 		_galleryNum.innerText = `${ index + 1 }/${ _images.length }`;
+		if (_images[index].gender === 'F') {
+			_galleryTitle.setAttribute('class', 'DcardImages__title--female');
+		} else {
+			_galleryTitle.setAttribute('class', 'DcardImages__title--male');
+		}
+
 		_galleryTitle.innerHTML = `
 			${ _images[index].host || '' }${ _images[index].school } ${ _images[index].department }<br />
 			B${ _images[index].floor } | ${ moment(_images[index].createdAt).utc(8).format('M月DD日 HH:mm') }
