@@ -5,7 +5,7 @@
 // @description  Dcard gallery for all images in the article and comments
 // @author       Y.Y.
 // @match        https://www.dcard.tw/*
-// @license		 MIT
+// @license      MIT
 // @grant        none
 // ==/UserScript==
 
