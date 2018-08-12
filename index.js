@@ -25,6 +25,7 @@ const PubSub = (() => {
 	const _galleryNext = document.createElement('span');
 	const _galleryPrev = document.createElement('span');
 	const _galleryClose = document.createElement('span');
+	let _isOpen = false;
 	let _pastURL = '';
 	let _images = [];
 	let _currentImg = 0;
@@ -34,7 +35,6 @@ const PubSub = (() => {
 	_URLCheck();
 
 	function _initGallery() {
-		_galleryBack.setAttribute('class', 'DcardImages__galleryBack');
 		_galleryBack.style.position = 'fixed';
 		_galleryBack.style.height = '100vh';
 		_galleryBack.style.width = '100vw';
@@ -42,7 +42,6 @@ const PubSub = (() => {
 		_galleryBack.style.zIndex = '20020';
 		_galleryBack.style.display = 'none';
 
-		_galleryImg.setAttribute('class', 'DcardImages__img');
 		_galleryImg.style.objectFit = 'contain';
 		_galleryImg.style.height = '100%';
 		_galleryImg.style.width = '100%';
@@ -93,6 +92,22 @@ const PubSub = (() => {
 		_galleryBack.appendChild(_galleryPrev);
 		_galleryBack.appendChild(_galleryClose);
 		document.getElementById('root').appendChild(_galleryBack);
+
+		document.body.addEventListener('keydown', function (e) {
+			if (_isOpen) {
+				switch (e.which) {
+					case 27:
+						_handleClose();
+						break;
+					case 37:
+						_handlePrev();
+						break;
+					case 39:
+						_handleNext();
+						break;
+				}
+			}
+		});
 	}
 
 	function _URLCheck() {
@@ -161,6 +176,7 @@ const PubSub = (() => {
 			return;
 		}
 
+		_isOpen = true;
 		_galleryBack.style.display = 'block';
 		_currentImg = 0;
 		_renderImage(_currentImg);
@@ -191,6 +207,7 @@ const PubSub = (() => {
 	}
 
 	function _handleClose() {
+		_isOpen = false;
 		_galleryBack.style.display = 'none';
 	}
 })();
