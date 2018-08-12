@@ -24,6 +24,7 @@ const PubSub = (() => {
 	const _galleryTitle = document.createElement('span');
 	const _galleryNext = document.createElement('span');
 	const _galleryPrev = document.createElement('span');
+	const _galleryClose = document.createElement('span');
 	let _pastURL = '';
 	let _images = [];
 	let _currentImg = 0;
@@ -73,10 +74,24 @@ const PubSub = (() => {
 		_galleryPrev.style.cursor = 'pointer';
 		_galleryPrev.addEventListener('click', _handlePrev);
 
+		_galleryClose.innerHTML = '&times;';
+		_galleryClose.style.position = 'absolute';
+		_galleryClose.style.top = '20px';
+		_galleryClose.style.right = '30px';
+		_galleryClose.style.background = 'red';
+		_galleryClose.style.color = '#f3f3f3';
+		_galleryClose.style.fontSize = '30px';
+		_galleryClose.style.padding = '5px';
+		_galleryClose.style.lineHeight = '16px';
+		_galleryClose.style.borderRadius = '20px';
+		_galleryClose.style.cursor = 'pointer';
+		_galleryClose.addEventListener('click', _handleClose);
+
 		_galleryBack.appendChild(_galleryImg);
 		_galleryBack.appendChild(_galleryTitle);
 		_galleryBack.appendChild(_galleryNext);
 		_galleryBack.appendChild(_galleryPrev);
+		_galleryBack.appendChild(_galleryClose);
 		document.getElementById('root').appendChild(_galleryBack);
 	}
 
@@ -103,6 +118,7 @@ const PubSub = (() => {
 	}
 
 	function _handleClick() {
+		_images = [];
 		let postID;
 		if (!!document.querySelectorAll('link[rel=canonical]')[0].href.match(/\/(\d*$)/)) {
 			postID = document.querySelectorAll('link[rel=canonical]')[0].href.match(/\/(\d*$)/)[1];
@@ -116,7 +132,7 @@ const PubSub = (() => {
 
 				Promise.all([...new Array(Math.ceil(data.commentCount / _commentUnit))].map((val, i) => {
 					return new Promise((resolve) => {
-						fetch(`/_api/posts/${postID}/comments?after=${i * _commentUnit}`).then(res => res.json()).then(resolve)
+						fetch(`/_api/posts/${ postID }/comments?after=${ i * _commentUnit }`).then(res => res.json()).then(resolve)
 					});
 				})).then((commentSetArr) => {
 					commentSetArr.forEach((comments) => {
@@ -152,7 +168,7 @@ const PubSub = (() => {
 
 	function _renderImage(index) {
 		_galleryImg.setAttribute('src', `https://imgur.dcard.tw/${ _images[index].imgHash }.jpg`);
-		_galleryTitle.innerText = `B${ _images[index].floor }`;
+		_galleryTitle.innerText = `B${ _images[index].floor } - ${ index + 1 }/${ _images.length }`;
 		// _galleryImg.load();
 	}
 
@@ -172,5 +188,9 @@ const PubSub = (() => {
 		}
 
 		_renderImage(_currentImg);
+	}
+
+	function _handleClose() {
+		_galleryBack.style.display = 'none';
 	}
 })();
