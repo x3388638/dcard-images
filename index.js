@@ -141,20 +141,25 @@ const PubSub = (() => {
 				data.media.forEach(m => {
 					_images.push({
 						floor: 0,
-						imgHash: m.url.match(/https:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.jpg/)[1]
+						imgHash: m.url.match(/http[s]?:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.jpg/)[1]
 					});
 				});
 
 				Promise.all([...new Array(Math.ceil(data.commentCount / _commentUnit))].map((val, i) => {
 					return new Promise((resolve) => {
-						fetch(`/_api/posts/${ postID }/comments?after=${ i * _commentUnit }`).then(res => res.json()).then(resolve)
+						fetch(`/_api/posts/${ postID }/comments?after=${ i * _commentUnit }`).then(res => {
+							if (res.ok) {
+								return res.json();
+							} else {
+								return Promise.resolve([]);
+							}
+						}).then(resolve)
 					});
 				})).then((commentSetArr) => {
 					commentSetArr.forEach((comments) => {
 						comments.forEach((comment) => {
-							const regex = /https:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.jpg/g;
+							const regex = /http[s]?:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.jpg/g;
 							const content = comment.content;
-							const imgs = [];
 							let match;
 							while (match = regex.exec(content)) {
 								_images.push({
