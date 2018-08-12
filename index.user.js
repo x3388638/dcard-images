@@ -156,7 +156,7 @@ const PubSub = (() => {
 				data.media.forEach(m => {
 					_images.push({
 						floor: 0,
-						imgHash: m.url.match(/http[s]?:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.jpg/)[1]
+						imgHash: m.url.match(/http[s]?:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.[jpg|png]/)[1]
 					});
 				});
 
@@ -173,7 +173,7 @@ const PubSub = (() => {
 				})).then((commentSetArr) => {
 					commentSetArr.forEach((comments) => {
 						comments.forEach((comment) => {
-							const regex = /http[s]?:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.jpg/g;
+							const regex = /http[s]?:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.[jpg|png]/g;
 							const content = comment.content;
 							let match;
 							while (match = regex.exec(content)) {
