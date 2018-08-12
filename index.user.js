@@ -44,61 +44,96 @@ const PubSub = (() => {
 	let _currentImg = 0;
 
 	window.onload = function () {
+		_addScript();
+		_addStyle();
 		_initGallery();
 		_handleURLChange();
 		_URLCheck();
 	}
 
+	function _addScript() {}
+
+	function _addStyle() {
+		const style = document.createElement('style');
+		style.innerHTML = `
+			.DcardImages__close {
+				position: absolute;
+				top: 20px;
+				right: 30px;
+				color: rgb(243, 243, 243);
+				font-size: 24px;
+				padding: 5px;
+				line-height: 12px;
+				cursor: pointer;
+			}
+
+			.DcardImages__close:hover {
+				color: red;
+			}
+
+			.DcardImages__galleryBack {
+				position: fixed;
+				height: 100vh;
+				width: 100vw;
+				background: rgba(0,0,0,.9);
+				z-index: 20020;
+				display: none;
+			}
+
+			.DcardImages__img {
+				object-fit: contain;
+				height: 100%;
+				width: 100%
+			}
+
+			.DcardImages__title {
+				position: absolute;
+				top: 20px;
+				left: 20px;
+				background: #f3f3f3;
+				display: inline-block;
+				padding: 5px 20px;
+				border-radius: 20px;
+				font-weight: bold;
+			}
+
+			.DcardImages__nextBtn {
+				position: absolute;
+				right: 5vw;
+				top: 45vh;
+				font-size: 60px;
+				color: #f3f3f3;
+				cursor: pointer;
+			}
+
+			.DcardImages__prevBtn {
+				position: absolute;
+				left: 5vw;
+				top: 45vh;
+				font-size: 60px;
+				color: #f3f3f3;
+				cursor: pointer;
+			}
+		`;
+
+		document.getElementById('root').appendChild(style);
+	}
+
 	function _initGallery() {
-		_galleryBack.style.position = 'fixed';
-		_galleryBack.style.height = '100vh';
-		_galleryBack.style.width = '100vw';
-		_galleryBack.style.background = 'rgba(0,0,0,.9)';
-		_galleryBack.style.zIndex = '20020';
-		_galleryBack.style.display = 'none';
+		_galleryBack.setAttribute('class', 'DcardImages__galleryBack');
+		_galleryImg.setAttribute('class', 'DcardImages__img');
+		_galleryTitle.setAttribute('class', 'DcardImages__title');
 
-		_galleryImg.style.objectFit = 'contain';
-		_galleryImg.style.height = '100%';
-		_galleryImg.style.width = '100%';
-
-		_galleryTitle.style.position = 'absolute';
-		_galleryTitle.style.top = '20px';
-		_galleryTitle.style.left = '20px';
-		_galleryTitle.style.background = '#f3f3f3';
-		_galleryTitle.style.display = 'inline-block';
-		_galleryTitle.style.padding = '5px 20px';
-		_galleryTitle.style.borderRadius = '20px';
-		_galleryTitle.style.fontWeight = 'bold';
-
+		_galleryNext.setAttribute('class', 'DcardImages__nextBtn');
 		_galleryNext.innerText = '>';
-		_galleryNext.style.position = 'absolute';
-		_galleryNext.style.right = '5vw';
-		_galleryNext.style.top = '45vh';
-		_galleryNext.style.fontSize = '60px';
-		_galleryNext.style.color = '#f3f3f3';
-		_galleryNext.style.cursor = 'pointer';
 		_galleryNext.addEventListener('click', _handleNext);
 
+		_galleryPrev.setAttribute('class', 'DcardImages__prevBtn');
 		_galleryPrev.innerText = '<';
-		_galleryPrev.style.position = 'absolute';
-		_galleryPrev.style.left = '5vw';
-		_galleryPrev.style.top = '45vh';
-		_galleryPrev.style.fontSize = '60px';
-		_galleryPrev.style.color = '#f3f3f3';
-		_galleryPrev.style.cursor = 'pointer';
 		_galleryPrev.addEventListener('click', _handlePrev);
 
 		_galleryClose.innerHTML = '&times;';
-		_galleryClose.style.position = 'absolute';
-		_galleryClose.style.top = '20px';
-		_galleryClose.style.right = '30px';
-		_galleryClose.style.background = 'red';
-		_galleryClose.style.color = '#f3f3f3';
-		_galleryClose.style.fontSize = '30px';
-		_galleryClose.style.padding = '5px';
-		_galleryClose.style.lineHeight = '16px';
-		_galleryClose.style.borderRadius = '20px';
-		_galleryClose.style.cursor = 'pointer';
+		_galleryClose.setAttribute('class', 'DcardImages__close');
 		_galleryClose.addEventListener('click', _handleClose);
 
 		_galleryBack.appendChild(_galleryImg);
@@ -137,9 +172,9 @@ const PubSub = (() => {
 	function _handleURLChange() {
 		PubSub.on('URLChange', () => {
 			if (!!document.querySelectorAll('link[rel=canonical]')[0].href.match(/\/(\d*$)/) &&
-				!document.querySelectorAll('.DcardImages').length) {
+				!document.querySelectorAll('.DcardImages__showGalleryBtn').length) {
 				const btn = document.createElement('button');
-				btn.setAttribute('class', 'DcardImages');
+				btn.setAttribute('class', 'DcardImages__showGalleryBtn');
 				btn.innerText = '瀏覽圖片';
 				btn.style.fontSize = '12px';
 				btn.style.lineHeight = '12px';
