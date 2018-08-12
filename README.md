@@ -3,9 +3,9 @@
 
 ## Demo
 ![](https://github.com/x3388638/dcard-images/blob/master/demo.gif)
-![](https://i.imgur.com/sEWZLmd.jpg)
-![](https://i.imgur.com/EzMhbp3.jpg)
-![](https://i.imgur.com/cQsYGFw.jpg)
+![](https://i.imgur.com/pZNCxqe.jpg)
+![](https://i.imgur.com/JB5Y0yt.jpg)
+![](https://i.imgur.com/nGcn5pL.jpg)
 
 ## 安裝方式
 ### 1. 於瀏覽器安裝 Tampermonkey
