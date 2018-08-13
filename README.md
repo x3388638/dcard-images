@@ -1,5 +1,5 @@
 # dcard-images
-快速瀏覽 Dcard 文章中包含原文與所有留言內的圖片
+快速瀏覽 [Dcard](https://www.dcard.tw/f) 文章中包含原文與所有留言內的圖片
 
 ## Demo
 ![](https://github.com/x3388638/dcard-images/blob/master/demo.gif)
