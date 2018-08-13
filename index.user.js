@@ -32,9 +32,9 @@ const PubSub = (() => {
 
 (() => {
 	const _scripts = [
-		'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js'
+		'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js',
+		'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.core.min.js'
 	];
-	const _commentUnit = 30;
 	const _galleryBack = document.createElement('div');
 	const _galleryImg = document.createElement('img');
 	const _galleryNum = document.createElement('span');
@@ -42,6 +42,9 @@ const PubSub = (() => {
 	const _galleryNext = document.createElement('span');
 	const _galleryPrev = document.createElement('span');
 	const _galleryClose = document.createElement('span');
+	const IMGUR_REGEX = /https?:\/\/i\.imgur\.com\/(\w*)\.(jpg|png)/;
+	const IMGUR_REGEX_g = /https?:\/\/i\.imgur\.com\/\w*\.(jpg|png)/g;
+
 	let _isOpen = false;
 	let _pastURL = '';
 	let _images = [];
@@ -59,7 +62,7 @@ const PubSub = (() => {
 		_scripts.forEach((s) => {
 			const script = document.createElement('script');
 			script.src = s;
-			document.getElementById('root').appendChild(script);
+			document.head.appendChild(script);
 		});
 	}
 
@@ -162,7 +165,7 @@ const PubSub = (() => {
 			}
 		`;
 
-		document.getElementById('root').appendChild(style);
+		document.head.appendChild(style);
 	}
 
 	function _initGallery() {
@@ -189,7 +192,7 @@ const PubSub = (() => {
 		_galleryBack.appendChild(_galleryNext);
 		_galleryBack.appendChild(_galleryPrev);
 		_galleryBack.appendChild(_galleryClose);
-		document.getElementById('root').appendChild(_galleryBack);
+		document.body.appendChild(_galleryBack);
 
 		document.body.addEventListener('keydown', function (e) {
 			if (_isOpen) {
@@ -219,7 +222,8 @@ const PubSub = (() => {
 
 	function _handleURLChange() {
 		PubSub.on('URLChange', () => {
-			if (!!document.querySelectorAll('link[rel=canonical]')[0].href.match(/\/(\d*$)/) &&
+			const canonical = document.querySelector('link[rel=canonical]');
+			if (!!canonical && canonical.href.match(/\/(\d*$)/) &&
 				!document.querySelectorAll('.DcardImages__showGalleryBtn').length) {
 				const btn = document.createElement('button');
 				btn.setAttribute('class', 'DcardImages__showGalleryBtn');
@@ -232,55 +236,66 @@ const PubSub = (() => {
 		});
 	}
 
+	function _isImgurLink(link) {
+		return IMGUR_REGEX.test(link);
+	}
+
+	function _imagesInPost(postID) {
+		return fetch(`/_api/posts/${ postID }`)
+			.then(res => res.json())
+			.then(post => 
+				post.media
+				.filter(media => _isImgurLink(media.url))
+				.map((media) => ({
+					floor: 0,
+					createdAt: post.createdAt,
+					school: post.school || '匿名',
+					department: post.department || '',
+					gender: post.gender,
+					imgHash: media.url.match(IMGUR_REGEX)[1]
+				}))
+			);
+	}
+
+	function _fetchComments(postID, after) {
+		return fetch(`/_api/posts/${ postID }/comments?after=${after}`)
+			.then(res => res.json());
+	}
+
+	function _fetchAllComments(postID, comments = []) {
+		return _fetchComments(postID, comments.length)
+			.then(c => comments.push(...c) && c.length > 0 ? _fetchAllComments(postID, comments) : comments);
+	}
+
+	function _imagesInAllComments(postID) {
+		return _fetchAllComments(postID)
+			.then(comments => 
+				comments.map(comment => {
+					const links = comment.content && comment.content.match(IMGUR_REGEX_g) || [];
+					const hashs = links.map(link => link.match(IMGUR_REGEX)[1]);
+					return hashs.map((hash) => ({
+						floor: comment.floor,
+						host: comment.host ? '原PO - ' : '',
+						createdAt: comment.createdAt,
+						school: comment.school || '匿名',
+						department: comment.department || '',
+						gender: comment.gender,
+						imgHash: hash
+					}));
+				})
+				.reduce((result, links) => result.concat(links), [])
+			);
+	}
+
 	function _handleClick() {
 		_images = [];
-		let postID;
-		if (!!document.querySelectorAll('link[rel=canonical]')[0].href.match(/\/(\d*$)/)) {
-			postID = document.querySelectorAll('link[rel=canonical]')[0].href.match(/\/(\d*$)/)[1];
-			fetch(`/_api/posts/${ postID }?`).then(res => res.json()).then(data => {
-				data.media.forEach(m => {
-					_images.push({
-						floor: 0,
-						createdAt: data.createdAt,
-						school: data.school || '匿名',
-						department: data.department || '',
-						gender: data.gender,
-						imgHash: m.url.match(/http[s]?:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.[jpg|png]/)[1]
-					});
-				});
-
-				Promise.all([...new Array(Math.ceil(data.commentCount / _commentUnit))].map((val, i) => {
-					return new Promise((resolve) => {
-						fetch(`/_api/posts/${ postID }/comments?after=${ i * _commentUnit }`).then(res => {
-							if (res.ok) {
-								return res.json();
-							} else {
-								return Promise.resolve([]);
-							}
-						}).then(resolve)
-					});
-				})).then((commentSetArr) => {
-					commentSetArr.forEach((comments) => {
-						comments.forEach((comment) => {
-							const regex = /http[s]?:\/\/i\.imgur\.com\/([A-Za-z0-9]*)\.[jpg|png]/g;
-							let match;
-							while (match = regex.exec(comment.content)) {
-								_images.push({
-									floor: comment.floor,
-									host: comment.host ? '原PO - ' : '',
-									createdAt: comment.createdAt,
-									school: comment.school || '匿名',
-									department: comment.department || '',
-									gender: comment.gender,
-									imgHash: match[1]
-								});
-							}
-						});
-					});
-
+		const postID = _.head(document.querySelector('link[rel=canonical]').href.match(/(\d*$)/));
+		if (postID) {
+			Promise.all([_imagesInPost(postID), _imagesInAllComments(postID)])
+				.then(([imagesInPost, imagesInAllComments]) => {
+					_images = imagesInPost.concat(imagesInAllComments);
 					_renderGallery();
 				});
-			});
 		}
 	}
 
