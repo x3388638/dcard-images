@@ -44,7 +44,7 @@ const PubSub = (() => {
 	const _galleryClose = document.createElement('span');
 	const IMGUR_REGEX = /https?:\/\/i\.imgur\.com\/(\w*)\.(jpg|png)/;
 	const IMGUR_REGEX_g = /https?:\/\/i\.imgur\.com\/\w*\.(jpg|png)/g;
-
+	const _commentUnit = 30;
 	let _isOpen = false;
 	let _pastURL = '';
 	let _images = [];
@@ -240,62 +240,66 @@ const PubSub = (() => {
 		return IMGUR_REGEX.test(link);
 	}
 
-	function _imagesInPost(postID) {
+	function _getPost(postID) {
 		return fetch(`/_api/posts/${ postID }`)
-			.then(res => res.json())
-			.then(post => 
-				post.media
-				.filter(media => _isImgurLink(media.url))
-				.map((media) => ({
-					floor: 0,
-					createdAt: post.createdAt,
-					school: post.school || '匿名',
-					department: post.department || '',
-					gender: post.gender,
-					imgHash: media.url.match(IMGUR_REGEX)[1]
-				}))
-			);
-	}
-
-	function _fetchComments(postID, after) {
-		return fetch(`/_api/posts/${ postID }/comments?after=${after}`)
 			.then(res => res.json());
 	}
 
-	function _fetchAllComments(postID, comments = []) {
-		return _fetchComments(postID, comments.length)
-			.then(c => comments.push(...c) && c.length > 0 ? _fetchAllComments(postID, comments) : comments);
+	function _imagesInPost(post) {
+		return post.media
+			.filter(media => _isImgurLink(media.url))
+			.map((media) => ({
+				floor: 0,
+				createdAt: post.createdAt,
+				school: post.school || '匿名',
+				department: post.department || '',
+				gender: post.gender,
+				imgHash: media.url.match(IMGUR_REGEX)[1]
+			}));
 	}
 
-	function _imagesInAllComments(postID) {
-		return _fetchAllComments(postID)
-			.then(comments => 
-				comments.map(comment => {
-					const links = comment.content && comment.content.match(IMGUR_REGEX_g) || [];
-					const hashs = links.map(link => link.match(IMGUR_REGEX)[1]);
-					return hashs.map((hash) => ({
-						floor: comment.floor,
-						host: comment.host ? '原PO - ' : '',
-						createdAt: comment.createdAt,
-						school: comment.school || '匿名',
-						department: comment.department || '',
-						gender: comment.gender,
-						imgHash: hash
-					}));
-				})
-				.reduce((result, links) => result.concat(links), [])
-			);
+	function _fetchComments(postID, after) {
+		return fetch(`/_api/posts/${ postID }/comments?after=${ after }`)
+			.then(res => res.json());
+	}
+
+	function _imagesInAllComments(postID, commentCount) {
+		return new Promise((resolve) => {
+			Promise.all([...new Array(Math.ceil(commentCount / _commentUnit))].map((val, i) => {
+				return _fetchComments(postID, i * _commentUnit);
+			})).then(commentSets => {
+				resolve(
+					commentSets
+						.reduce((comments, set) => comments.concat(set), [])
+						.map(comment => {
+							const links = comment.content && comment.content.match(IMGUR_REGEX_g) || [];
+							return links.map((link) => ({
+								floor: comment.floor,
+								host: comment.host ? '原PO - ' : '',
+								createdAt: comment.createdAt,
+								school: comment.school || '匿名',
+								department: comment.department || '',
+								gender: comment.gender,
+								imgHash: link.match(IMGUR_REGEX)[1]
+							}));
+					})
+					.reduce((result, links) => result.concat(links), [])
+				);
+			});
+		});
 	}
 
 	function _handleClick() {
 		_images = [];
 		const postID = _.head(document.querySelector('link[rel=canonical]').href.match(/(\d*$)/));
 		if (postID) {
-			Promise.all([_imagesInPost(postID), _imagesInAllComments(postID)])
-				.then(([imagesInPost, imagesInAllComments]) => {
-					_images = imagesInPost.concat(imagesInAllComments);
-					_renderGallery();
-				});
+			_getPost(postID).then(post => {
+				Promise.all([_imagesInPost(post), _imagesInAllComments(postID, post.commentCount)])
+					.then(([imagesInPost, imagesInAllComments]) => {
+						_images = imagesInPost.concat(imagesInAllComments);
+						_renderGallery();
+					});
+			});
 		}
 	}
 
