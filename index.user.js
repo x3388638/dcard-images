@@ -264,42 +264,37 @@ const PubSub = (() => {
 	}
 
 	function _imagesInAllComments(postID, commentCount) {
-		return new Promise((resolve) => {
-			Promise.all([...new Array(Math.ceil(commentCount / _commentUnit))].map((val, i) => {
-				return _fetchComments(postID, i * _commentUnit);
-			})).then(commentSets => {
-				resolve(
-					commentSets
-						.reduce((comments, set) => comments.concat(set), [])
-						.map(comment => {
-							const links = comment.content && comment.content.match(IMGUR_REGEX_g) || [];
-							return links.map((link) => ({
-								floor: comment.floor,
-								host: comment.host ? '原PO - ' : '',
-								createdAt: comment.createdAt,
-								school: comment.school || '匿名',
-								department: comment.department || '',
-								gender: comment.gender,
-								imgHash: link.match(IMGUR_REGEX)[1]
-							}));
-					})
-					.reduce((result, links) => result.concat(links), [])
-				);
-			});
-		});
+		return Promise.all([...new Array(Math.ceil(commentCount / _commentUnit))].map((val, i) => {
+			return _fetchComments(postID, i * _commentUnit);
+		})).then(commentSets =>
+			commentSets
+				.reduce((comments, set) => comments.concat(set), [])
+				.map(comment => {
+					const links = comment.content && comment.content.match(IMGUR_REGEX_g) || [];
+					return links.map((link) => ({
+						floor: comment.floor,
+						host: comment.host ? '原PO - ' : '',
+						createdAt: comment.createdAt,
+						school: comment.school || '匿名',
+						department: comment.department || '',
+						gender: comment.gender,
+						imgHash: link.match(IMGUR_REGEX)[1]
+					}));
+			})
+			.reduce((result, links) => result.concat(links), [])
+		);
 	}
 
 	function _handleClick() {
 		_images = [];
 		const postID = _.head(document.querySelector('link[rel=canonical]').href.match(/(\d*$)/));
 		if (postID) {
-			_getPost(postID).then(post => {
-				Promise.all([_imagesInPost(post), _imagesInAllComments(postID, post.commentCount)])
-					.then(([imagesInPost, imagesInAllComments]) => {
-						_images = imagesInPost.concat(imagesInAllComments);
-						_renderGallery();
-					});
-			});
+			_getPost(postID)
+				.then(post => Promise.all([_imagesInPost(post), _imagesInAllComments(postID, post.commentCount)]))
+				.then(([imagesInPost, imagesInAllComments]) => {
+					_images = imagesInPost.concat(imagesInAllComments);
+					_renderGallery();
+				});
 		}
 	}
 
