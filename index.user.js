@@ -264,9 +264,10 @@ const PubSub = (() => {
 	}
 
 	function _imagesInAllComments(postID, commentCount) {
-		return Promise.all([...new Array(Math.ceil(commentCount / _commentUnit))].map((val, i) => {
-			return _fetchComments(postID, i * _commentUnit);
-		})).then(commentSets =>
+		return Promise.all([...new Array(Math.ceil(commentCount / _commentUnit))].map((val, i) =>
+			new Promise((resolve) => setTimeout(resolve, parseInt(i / 10) * 12))
+				.then(() => _fetchComments(postID, i * _commentUnit))
+		)).then(commentSets =>
 			commentSets
 				.reduce((comments, set) => comments.concat(set), [])
 				.map(comment => {
