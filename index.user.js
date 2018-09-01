@@ -35,6 +35,11 @@ const PubSub = (() => {
 		'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js',
 		'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.core.min.js'
 	];
+
+	const _styles = [
+		'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
+	];
+
 	const _galleryBack = document.createElement('div');
 	const _galleryImg = document.createElement('img');
 	const _galleryNum = document.createElement('span');
@@ -51,8 +56,8 @@ const PubSub = (() => {
 	let _currentImg = 0;
 
 	window.onload = function () {
-		_addScript();
 		_addStyle();
+		_addScript();
 		_initGallery();
 		_handleURLChange();
 		_URLCheck();
@@ -67,8 +72,25 @@ const PubSub = (() => {
 	}
 
 	function _addStyle() {
+		_styles.forEach((style) => {
+			const link = document.createElement('link');
+			link.rel = 'stylesheet';
+			link.href = style;
+			document.head.appendChild(link);
+		});
+
 		const style = document.createElement('style');
 		style.innerHTML = `
+			.DcardImages__showGalleryBtn {
+				font-size: 18px;
+				background: #006aa6;
+				padding: 5px;
+				color: #fff;
+				margin-left: 10px;
+				border-radius: 8px;
+				cursor: pointer;
+			}
+
 			.DcardImages__close {
 				position: absolute;
 				top: 20px;
@@ -225,11 +247,10 @@ const PubSub = (() => {
 			const canonical = document.querySelector('link[rel=canonical]');
 			if (!!canonical && canonical.href.match(/\/(\d*$)/) &&
 				!document.querySelectorAll('.DcardImages__showGalleryBtn').length) {
-				const btn = document.createElement('button');
+				const btn = document.createElement('span');
 				btn.setAttribute('class', 'DcardImages__showGalleryBtn');
-				btn.innerText = '瀏覽圖片';
-				btn.style.fontSize = '12px';
-				btn.style.lineHeight = '12px';
+				btn.setAttribute('title', '瀏覽圖片');
+				btn.innerHTML = '<i class="fa fa-picture-o" aria-hidden="true"></i>';
 				btn.addEventListener('click', _handleClick);
 				document.querySelectorAll('article>div>div>h2')[0].appendChild(btn);
 			}
