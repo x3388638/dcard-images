@@ -95,7 +95,7 @@ const PubSub = (() => {
 				position: absolute;
 				top: 20px;
 				right: 30px;
-				color: rgb(243, 243, 243);
+				color: #bbb;
 				font-size: 24px;
 				padding: 5px;
 				line-height: 12px;
@@ -166,9 +166,9 @@ const PubSub = (() => {
 				right: 5vw;
 				top: 45vh;
 				font-size: 60px;
-				color: #f3f3f3;
+				color: #bbb;
 				cursor: pointer;
-				opacity: 0.1
+				opacity: 0.3;
 			}
 
 			.DcardImages__prevBtn {
@@ -176,9 +176,9 @@ const PubSub = (() => {
 				left: 5vw;
 				top: 45vh;
 				font-size: 60px;
-				color: #f3f3f3;
+				color: #bbb;
 				cursor: pointer;
-				opacity: 0.1
+				opacity: 0.3;
 			}
 
 			.DcardImages__nextBtn:hover,
@@ -197,11 +197,11 @@ const PubSub = (() => {
 		_galleryTitle.setAttribute('class', 'DcardImages__title');
 
 		_galleryNext.setAttribute('class', 'DcardImages__nextBtn');
-		_galleryNext.innerText = '〉';
+		_galleryNext.innerHTML = '<i class="fa fa-chevron-right" aria-hidden="true"></i>';
 		_galleryNext.addEventListener('click', _handleNext);
 
 		_galleryPrev.setAttribute('class', 'DcardImages__prevBtn');
-		_galleryPrev.innerText = '〈';
+		_galleryPrev.innerHTML = '<i class="fa fa-chevron-left" aria-hidden="true"></i>';
 		_galleryPrev.addEventListener('click', _handlePrev);
 
 		_galleryClose.innerHTML = '&times;';
