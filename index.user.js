@@ -55,7 +55,7 @@ const PubSub = (() => {
 	let _images = [];
 	let _currentImg = 0;
 
-	window.onload = function () {
+	function init() {
 		_addStyle();
 		_addScript();
 		_initGallery();
@@ -83,12 +83,16 @@ const PubSub = (() => {
 		style.innerHTML = `
 			.DcardImages__showGalleryBtn {
 				font-size: 18px;
-				background: #006aa6;
+				background: rgb(196, 196, 196);
 				padding: 5px;
 				color: #fff;
 				margin-left: 10px;
-				border-radius: 8px;
+				border-radius: 20px;
 				cursor: pointer;
+			}
+
+			.DcardImages__showGalleryBtn:hover {
+				background: #006aa6;
 			}
 
 			.DcardImages__close {
@@ -235,7 +239,7 @@ const PubSub = (() => {
 
 	function _URLCheck() {
 		setInterval(() => {
-			if (_pastURL !== location.href) {
+			if (_pastURL !== location.href && !!document.querySelector('[class^=Post_title]')) {
 				_pastURL = location.href;
 				PubSub.emit('URLChange');
 			}
@@ -252,7 +256,7 @@ const PubSub = (() => {
 				btn.setAttribute('title', '瀏覽圖片');
 				btn.innerHTML = '<i class="fa fa-picture-o" aria-hidden="true"></i>';
 				btn.addEventListener('click', _handleClick);
-				document.querySelectorAll('article>div>div>h2')[0].appendChild(btn);
+				document.querySelector('[class^=Post_title]').appendChild(btn);
 			}
 		});
 	}
@@ -368,4 +372,6 @@ const PubSub = (() => {
 		_isOpen = false;
 		_galleryBack.style.display = 'none';
 	}
+
+	init();
 })();
