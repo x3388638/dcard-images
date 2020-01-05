@@ -1,0 +1,70 @@
+{
+  "name": "dcard-images",
+  "version": "0.2.6",
+  "description": "Dcard gallery for all images in the article and comments",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack && cat meta.js index.user.js > temp && mv temp index.user.js",
+    "prettier:check": "prettier --check ./**/*.{js,json,css} && echo \"✅ Prettier validated\"",
+    "prettier:write": "prettier --write ./**/*.{js,json,css}",
+    "lint": "eslint './**/*.js'",
+    "lint:fix": "eslint './**/*.js' --fix",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/x3388638/dcard-images.git"
+  },
+  "author": "YY",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/x3388638/dcard-images/issues"
+  },
+  "homepage": "https://github.com/x3388638/dcard-images#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-react": "^7.7.4",
+    "@storybook/addon-actions": "^5.2.8",
+    "@storybook/addon-links": "^5.2.8",
+    "@storybook/addons": "^5.2.8",
+    "@storybook/react": "^5.2.8",
+    "babel-loader": "^8.0.6",
+    "babel-preset-minify": "^0.5.1",
+    "css-loader": "^3.4.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.17.0",
+    "husky": "^3.1.0",
+    "lint-staged": "^9.5.0",
+    "prettier": "^1.19.1",
+    "style-loader": "^1.1.2",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  },
+  "lint-staged": {
+    "*.{js,json,css}": [
+      "npm run prettier:check",
+      "git add"
+    ],
+    "*.js": [
+      "npm run lint",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.7.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.26",
+    "@fortawesome/free-solid-svg-icons": "^5.12.0",
+    "@fortawesome/react-fontawesome": "^0.1.8",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  }
+}
