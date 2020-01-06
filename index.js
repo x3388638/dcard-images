@@ -26,7 +26,7 @@ const App = () => {
   return (
     <React.Fragment>
       <BrowerBtn onClick={handleOpen} />
-      {isOpen && <Gallery onClose={handleClose} images={images} />}
+      <Gallery isOpen={isOpen} images={images} onClose={handleClose} />
     </React.Fragment>
   )
 }
