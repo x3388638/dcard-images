@@ -2,91 +2,22 @@ import React, { useState, useCallback } from 'react'
 import ReactDOM from 'react-dom'
 import BrowerBtn from './components/BrowseBtn'
 import Gallery from './components/Gallery'
+import useFetchImage from './components/hooks/fetchImageHook'
 // import { PubSub } from './util'
 
 const App = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [images, setImages] = useState([])
-  const IMGUR_REGEX = /https?:\/\/i\.imgur\.com\/(\w*)\.(jpg|png)/
-  const IMGUR_REGEX_g = /https?:\/\/i\.imgur\.com\/\w*\.(jpg|png)/g
+  const { fetchImagesByPostID, images } = useFetchImage()
 
-  const getImagesInPost = useCallback(
-    post =>
-      post.media
-        .filter(media => IMGUR_REGEX.test(media.url))
-        .map(media => ({
-          floor: 0,
-          createdAt: post.createdAt,
-          school: post.school || '匿名',
-          department: post.department || '',
-          gender: post.gender,
-          imgHash: media.url.match(IMGUR_REGEX)[1]
-        })),
-    []
-  )
-
-  const getImagesInAllComments = useCallback((postID, commentCount) => {
-    const commentsPerPage = 30
-
-    return Promise.all(
-      [...Array(Math.ceil(commentCount / commentsPerPage))].map((val, i) =>
-        fetch(
-          `/_api/posts/${postID}/comments?after=${i * commentsPerPage}`
-        ).then(res => res.json())
-      )
-    ).then(commentSets =>
-      commentSets.reduce((result, commentSet) => {
-        commentSet.forEach(comment => {
-          const links =
-            (comment.content && comment.content.match(IMGUR_REGEX_g)) || []
-
-          links.forEach(link => {
-            result.push({
-              floor: comment.floor,
-              host: comment.host ? '原PO - ' : '',
-              createdAt: comment.createdAt,
-              school: comment.school || '匿名',
-              department: comment.department || '',
-              gender: comment.gender,
-              imgHash: link.match(IMGUR_REGEX)[1]
-            })
-          })
-        })
-
-        return result
-      }, [])
-    )
-  }, [])
-
-  const fetchImages = useCallback(() => {
+  const handleOpen = useCallback(() => {
     const postID = document
       .querySelector('link[rel=canonical]')
       .href.match(/(\d*$)/)[0]
 
-    if (postID) {
-      return fetch(`/_api/posts/${postID}`)
-        .then(res => res.json())
-        .then(post =>
-          Promise.all([
-            getImagesInPost(post),
-            getImagesInAllComments(postID, post.commentCount)
-          ])
-        )
-        .then(([imagesInPost, imagesInAllComments]) => [
-          ...imagesInPost,
-          ...imagesInAllComments
-        ])
-    } else {
-      return Promise.reject()
-    }
-  }, [getImagesInPost, getImagesInAllComments])
-
-  const handleOpen = useCallback(() => {
-    fetchImages().then(images => {
-      setImages(images)
+    fetchImagesByPostID(postID).then(() => {
       setIsOpen(true)
     })
-  }, [fetchImages])
+  }, [fetchImagesByPostID])
 
   const handleClose = useCallback(() => {
     setIsOpen(false)
