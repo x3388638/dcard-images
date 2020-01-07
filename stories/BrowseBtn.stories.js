@@ -2,9 +2,10 @@ import React from 'react'
 import BrowseBtn from '../components/BrowseBtn'
 
 export default {
-  title: 'BrowseBtn'
+  title: 'BrowseBtn',
+  component: BrowseBtn
 }
 
-export const Basic = () => {
+export const Default = () => {
   return <BrowseBtn />
 }

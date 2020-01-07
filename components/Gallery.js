@@ -6,7 +6,7 @@ import { Transition } from 'react-transition-group'
 
 const Backdrop = styled.div`
   position: fixed;
-  top: 0%;
+  top: 0;
   left: 0;
   height: 100vh;
   width: 100vw;
@@ -55,7 +55,8 @@ const Gallery = ({ isOpen = false, images = [], onClose }) => {
           <CloseBtn onClick={onClose}>
             <FontAwesomeIcon icon={faTimesCircle} />
           </CloseBtn>
-          {images}
+          {JSON.stringify(images)}
+          {/* image grid, carousel */}
         </Backdrop>
       )}
     </Transition>
