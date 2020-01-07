@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle, faRedo } from '@fortawesome/free-solid-svg-icons'
 import { Transition } from 'react-transition-group'
+import Carousel from './Carousel'
 
 const Backdrop = styled.div`
   position: fixed;
@@ -104,9 +105,14 @@ const ImageLabel = styled.span`
 
 const Gallery = ({ isOpen = false, images = [], onClose }) => {
   const [reload, setReload] = useState(0)
+  const [carouselIndex, setCarouselIndex] = useState(null)
   const handleReload = useCallback(() => {
     setReload(c => c + 1)
-  })
+  }, [])
+
+  const closeCarousel = useCallback(() => {
+    setCarouselIndex(null)
+  }, [])
 
   const transitionStyles = {
     entering: { opacity: 0 },
@@ -130,13 +136,17 @@ const Gallery = ({ isOpen = false, images = [], onClose }) => {
           <ReloadBtn onClick={handleReload}>
             <FontAwesomeIcon icon={faRedo} />
           </ReloadBtn>
-          {/* image grid, carousel */}
           <ImageGridContainer>
             {images.map((imageData, i) => {
               const { img, gender, floor, host, school, department } = imageData
               return (
-                <ImageItem key={i} img={`${img}?_=${Math.random() + reload}`}>
-                  {/* show floor, gender, name(school, dept), download btn, date, index */}
+                <ImageItem
+                  key={i}
+                  img={`${img}?_=${reload}`}
+                  onClick={() => {
+                    setCarouselIndex(i)
+                  }}
+                >
                   <ImageLabel gender={gender}>
                     <span>B{floor}</span>
                     <span>
@@ -149,6 +159,13 @@ const Gallery = ({ isOpen = false, images = [], onClose }) => {
               )
             })}
           </ImageGridContainer>
+          {carouselIndex !== null && (
+            <Carousel
+              onClose={closeCarousel}
+              images={images}
+              index={carouselIndex}
+            />
+          )}
         </Backdrop>
       )}
     </Transition>
