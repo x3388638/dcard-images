@@ -5,6 +5,20 @@ import Gallery from './components/Gallery'
 import useFetchImage from './components/hooks/fetchImageHook'
 // import { PubSub } from './util'
 
+const fixBody = () => {
+  const scrollTop =
+    document.body.scrollTop || document.documentElement.scrollTop
+  document.body.style.cssText += 'position:fixed;top:-' + scrollTop + 'px;'
+}
+
+const looseBody = () => {
+  const body = document.body
+  body.style.position = ''
+  const top = body.style.top
+  document.body.scrollTop = document.documentElement.scrollTop = -parseInt(top)
+  body.style.top = ''
+}
+
 const App = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { fetchImagesByPostID, images } = useFetchImage()
@@ -16,10 +30,12 @@ const App = () => {
 
     fetchImagesByPostID(postID).then(() => {
       setIsOpen(true)
+      fixBody()
     })
   }, [fetchImagesByPostID])
 
   const handleClose = useCallback(() => {
+    looseBody()
     setIsOpen(false)
   }, [])
 

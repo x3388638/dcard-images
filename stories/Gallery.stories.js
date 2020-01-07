@@ -19,7 +19,7 @@ const mockedImageInComment = {
   createdAt: '2020-01-02T10:00:00+08:00',
   school: '國立暨南國際大學',
   department: '資訊管理學系',
-  gender: 'M',
+  gender: 'F',
   img: 'https://fakeimg.pl/640x800/'
 }
 

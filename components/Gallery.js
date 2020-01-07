@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+import { faTimesCircle, faRedo } from '@fortawesome/free-solid-svg-icons'
 import { Transition } from 'react-transition-group'
 
 const Backdrop = styled.div`
@@ -19,7 +19,7 @@ const Backdrop = styled.div`
   box-sizing: border-box;
 `
 
-const CloseBtn = styled.span`
+const ToolBtn = styled.span`
   justify-content: center;
   align-items: center;
   display: flex;
@@ -27,7 +27,6 @@ const CloseBtn = styled.span`
   font-size: 25px;
   cursor: pointer;
   position: fixed;
-  top: 10px;
   right: 2%;
   line-height: 25px;
   transition: transform 0.2s;
@@ -36,6 +35,14 @@ const CloseBtn = styled.span`
     color: #fff;
     transform: rotate(360deg);
   }
+`
+
+const CloseBtn = styled(ToolBtn)`
+  top: 10px;
+`
+
+const ReloadBtn = styled(ToolBtn)`
+  top: 50px;
 `
 
 const ImageGridContainer = styled.div`
@@ -73,13 +80,34 @@ const ImageItem = styled.div`
   background-repeat: no-repeat;
   background-image: ${({ img }) => `url(${img})`};
   transition: box-shadow 0.2s;
+  position: relative;
 
   &:hover {
     box-shadow: 0 0 10px 0px #f3f3f3;
   }
 `
 
+const ImageLabel = styled.span`
+  background: ${({ gender }) => (gender === 'F' ? '#f48fb1' : '#81d4fa')};
+  display: inline-flex;
+  position: absolute;
+  font-size: 12px;
+  padding: 5px;
+  top: 5px;
+  left: -5px;
+  line-height: 16px;
+
+  span + span {
+    margin-left: 5px;
+  }
+`
+
 const Gallery = ({ isOpen = false, images = [], onClose }) => {
+  const [reload, setReload] = useState(0)
+  const handleReload = useCallback(() => {
+    setReload(c => c + 1)
+  })
+
   const transitionStyles = {
     entering: { opacity: 0 },
     entered: { opacity: 1 },
@@ -99,13 +127,27 @@ const Gallery = ({ isOpen = false, images = [], onClose }) => {
           <CloseBtn onClick={onClose}>
             <FontAwesomeIcon icon={faTimesCircle} />
           </CloseBtn>
+          <ReloadBtn onClick={handleReload}>
+            <FontAwesomeIcon icon={faRedo} />
+          </ReloadBtn>
           {/* image grid, carousel */}
           <ImageGridContainer>
-            {images.map((imageData, i) => (
-              <ImageItem key={i} img={imageData.img}>
-                {/* show floor, gender, name(school, dept), download btn, date, index */}
-              </ImageItem>
-            ))}
+            {images.map((imageData, i) => {
+              const { img, gender, floor, host, school, department } = imageData
+              return (
+                <ImageItem key={i} img={`${img}?_=${Math.random() + reload}`}>
+                  {/* show floor, gender, name(school, dept), download btn, date, index */}
+                  <ImageLabel gender={gender}>
+                    <span>B{floor}</span>
+                    <span>
+                      {host} {school}
+                      <br />
+                      {department}
+                    </span>
+                  </ImageLabel>
+                </ImageItem>
+              )
+            })}
           </ImageGridContainer>
         </Backdrop>
       )}

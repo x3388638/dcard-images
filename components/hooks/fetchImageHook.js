@@ -22,8 +22,7 @@ const useFetchImage = () => {
             school: post.school || '匿名',
             department: post.department || '',
             gender: post.gender,
-            imgHash: 'Deprecated', // FIXME
-            img: mediaData.url
+            img: mediaData.url.replace('i.imgur.com', 'imgur.dcard.tw')
           })
         }
 
@@ -44,10 +43,14 @@ const useFetchImage = () => {
     ).then(commentSets =>
       commentSets.reduce((result, commentSet) => {
         commentSet.forEach(comment => {
-          const links =
-            (comment.content &&
-              comment.content.match(new RegExp(IMGUR_REGEX, 'gi'))) ||
-            []
+          if (!comment.content) {
+            return
+          }
+
+          const links = [
+            ...(comment.content.match(new RegExp(IMGUR_REGEX, 'gi')) || []),
+            ...(comment.content.match(new RegExp(MEGAPX_REGEX, 'gi')) || [])
+          ]
 
           links.forEach(link => {
             result.push({
@@ -57,8 +60,7 @@ const useFetchImage = () => {
               school: comment.school || '匿名',
               department: comment.department || '',
               gender: comment.gender,
-              imgHash: 'Deprecated',
-              img: link.match(IMGUR_REGEX)[0]
+              img: link.replace('i.imgur.com', 'imgur.dcard.tw')
             })
           })
         })
