@@ -74,6 +74,14 @@ const btnBase = styled.span`
   transform: translateY(-50%);
   cursor: pointer;
   transition: opacity 0.2s;
+  line-height: 40px;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  border-radius: 50%;
+  background: #666;
 
   &:hover {
     opacity: 1;
