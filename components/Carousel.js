@@ -60,9 +60,10 @@ const Img = styled.img`
 const Index = styled.span`
   position: fixed;
   top: 15px;
-  right: 15px;
-  color: #f3f3f3;
+  right: 25px;
+  line-height: 12px;
   font-size: 12px;
+  color: #f3f3f3;
 `
 
 const btnBase = styled.span`
