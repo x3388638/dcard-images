@@ -97,6 +97,7 @@ const ImageLabel = styled.span`
   top: 5px;
   left: -5px;
   line-height: 16px;
+  color: #111;
 
   span + span {
     margin-left: 5px;

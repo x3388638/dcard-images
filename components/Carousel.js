@@ -27,6 +27,7 @@ const Label = styled.span`
   top: 10px;
   left: 0;
   line-height: 14px;
+  color: #111;
 
   span,
   div {
@@ -35,7 +36,7 @@ const Label = styled.span`
   }
 
   span + span {
-    border-left: 1px solid #f3f3f3;
+    border-left: 1px solid #111;
     margin-left: 10px;
     padding-left: 10px;
   }
@@ -45,6 +46,7 @@ const BackBtn = styled.div`
   padding-right: 10px;
   font-size: 24px;
   cursor: pointer;
+  color: #f3f3f3;
 
   &:hover {
     color: #444;
