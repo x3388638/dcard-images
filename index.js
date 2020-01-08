@@ -19,9 +19,6 @@ const looseBody = () => {
 }
 
 const renderReactApp = canonicalUrl => {
-  console.log('renderReactApp')
-  console.log('canonicalUrl', canonicalUrl)
-
   if (
     !!canonicalUrl &&
     canonicalUrl.match(/\/(\d*$)/) &&
@@ -63,8 +60,9 @@ const App = () => {
 
 let canonicalUrl = ''
 setInterval(() => {
-  const url = document.querySelector('link[rel=canonical]').href
-  if (url !== canonicalUrl) {
+  const canonical = document.querySelector('link[rel=canonical]')
+  const url = canonical && canonical.href
+  if (url && url !== canonicalUrl) {
     canonicalUrl = url
     renderReactApp(canonicalUrl)
   }
