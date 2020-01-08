@@ -13,7 +13,7 @@ const BrowseBtn = ({ onClick }) => {
         margin-left: 10px;
         border-radius: 50%;
         cursor: pointer;
-        vertical-align: top;
+        vertical-align: middle;
         &:hover {
           background: #006aa6;
         }

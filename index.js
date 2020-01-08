@@ -24,7 +24,7 @@ const renderReactApp = canonicalUrl => {
     canonicalUrl.match(/\/(\d*$)/) &&
     !document.getElementById('dcard-images-root')
   ) {
-    document.querySelector('[class^=Post_title]').innerHTML +=
+    document.querySelector('article h1').innerHTML +=
       '<span id="dcard-images-root"></span>'
     ReactDOM.render(<App />, document.getElementById('dcard-images-root'))
   }
