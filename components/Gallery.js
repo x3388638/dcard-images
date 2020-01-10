@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle, faRedo } from '@fortawesome/free-solid-svg-icons'
 import { Transition } from 'react-transition-group'
 import Carousel from './Carousel'
+import ImageItem from './ImageItem'
 
 const Backdrop = styled.div`
   position: fixed;
@@ -71,39 +72,6 @@ const ImageGridContainer = styled.div`
   }
 `
 
-const ImageItem = styled.div`
-  border: 1px solid #fff;
-  border-radius: 8px;
-  height: 175px;
-  cursor: pointer;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-image: ${({ img }) => `url(${img})`};
-  transition: box-shadow 0.2s;
-  position: relative;
-
-  &:hover {
-    box-shadow: 0 0 10px 0px #f3f3f3;
-  }
-`
-
-const ImageLabel = styled.span`
-  background: ${({ gender }) => (gender === 'F' ? '#f48fb1' : '#81d4fa')};
-  display: inline-flex;
-  position: absolute;
-  font-size: 12px;
-  padding: 5px;
-  top: 5px;
-  left: -5px;
-  line-height: 16px;
-  color: #111;
-
-  span + span {
-    margin-left: 5px;
-  }
-`
-
 const Gallery = ({ isOpen = false, images = [], onClose }) => {
   const [reload, setReload] = useState(0)
   const [carouselIndex, setCarouselIndex] = useState(null)
@@ -138,27 +106,16 @@ const Gallery = ({ isOpen = false, images = [], onClose }) => {
             <FontAwesomeIcon icon={faRedo} />
           </ReloadBtn>
           <ImageGridContainer>
-            {images.map((imageData, i) => {
-              const { img, gender, floor, host, school, department } = imageData
-              return (
-                <ImageItem
-                  key={i}
-                  img={`${img}?_=${reload}`}
-                  onClick={() => {
-                    setCarouselIndex(i)
-                  }}
-                >
-                  <ImageLabel gender={gender}>
-                    <span>B{floor}</span>
-                    <span>
-                      {host} {school}
-                      <br />
-                      {department}
-                    </span>
-                  </ImageLabel>
-                </ImageItem>
-              )
-            })}
+            {images.map((imageData, i) => (
+              <ImageItem
+                key={i}
+                reload={reload}
+                imageData={imageData}
+                onClick={() => {
+                  setCarouselIndex(i)
+                }}
+              />
+            ))}
           </ImageGridContainer>
           {carouselIndex !== null && (
             <Carousel
