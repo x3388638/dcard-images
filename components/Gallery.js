@@ -1,7 +1,11 @@
 import React, { useState, useCallback } from 'react'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTimesCircle, faRedo } from '@fortawesome/free-solid-svg-icons'
+import {
+  faTimesCircle,
+  faRedo,
+  faSpinner
+} from '@fortawesome/free-solid-svg-icons'
 import { Transition } from 'react-transition-group'
 import Carousel from './Carousel'
 import ImageItem from './ImageItem'
@@ -72,7 +76,32 @@ const ImageGridContainer = styled.div`
   }
 `
 
-const Gallery = ({ isOpen = false, images = [], onClose }) => {
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
+
+const Loading = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: ${rotate} 1s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
+  color: #f3f3f3;
+  font-size: 24px;
+  height: 175px;
+`
+
+const Gallery = ({
+  isOpen = false,
+  isFetching = false,
+  images = [],
+  onClose
+}) => {
   const [reload, setReload] = useState(0)
   const [carouselIndex, setCarouselIndex] = useState(null)
   const handleReload = useCallback(() => {
@@ -116,6 +145,11 @@ const Gallery = ({ isOpen = false, images = [], onClose }) => {
                 }}
               />
             ))}
+            {isFetching && (
+              <Loading>
+                <FontAwesomeIcon icon={faSpinner} />
+              </Loading>
+            )}
           </ImageGridContainer>
           {carouselIndex !== null && (
             <Carousel

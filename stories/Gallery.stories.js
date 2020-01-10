@@ -71,6 +71,15 @@ export const ImagesInComment = () => (
   />
 )
 
+export const IsFetching = () => (
+  <Gallery
+    isOpen
+    isFetching
+    images={[mockedImageInArticle, mockedImageInComment]}
+    onClose={action('onClose')}
+  />
+)
+
 export default {
   component: Gallery,
   title: 'Gallery',

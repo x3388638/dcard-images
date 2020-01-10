@@ -32,6 +32,7 @@ const renderReactApp = canonicalUrl => {
 
 const App = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [isFetching, setIsFetching] = useState(false)
   const { fetchImagesByPostID, images } = useFetchImage()
 
   const handleOpen = useCallback(() => {
@@ -39,10 +40,19 @@ const App = () => {
       .querySelector('link[rel=canonical]')
       .href.match(/(\d*$)/)[0]
 
-    fetchImagesByPostID(postID).then(() => {
-      setIsOpen(true)
-      fixBody()
-    })
+    setIsFetching(true)
+    fetchImagesByPostID(postID)
+      .then(() => {
+        setIsFetching(false)
+      })
+      .catch(() => {
+        setIsFetching(false)
+        setIsOpen(false)
+        looseBody()
+      })
+
+    setIsOpen(true)
+    fixBody()
   }, [fetchImagesByPostID])
 
   const handleClose = useCallback(() => {
@@ -53,7 +63,12 @@ const App = () => {
   return (
     <React.Fragment>
       <BrowerBtn onClick={handleOpen} />
-      <Gallery isOpen={isOpen} images={images} onClose={handleClose} />
+      <Gallery
+        isOpen={isOpen}
+        images={images}
+        isFetching={isFetching}
+        onClose={handleClose}
+      />
     </React.Fragment>
   )
 }
