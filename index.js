@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import BrowerBtn from './components/BrowseBtn'
 import Gallery from './components/Gallery'
@@ -33,27 +33,44 @@ const renderReactApp = canonicalUrl => {
 const App = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [isFetching, setIsFetching] = useState(false)
+  const [isFetchError, setIsFetchError] = useState(false)
   const { fetchImagesByPostID, images } = useFetchImage()
 
-  const handleOpen = useCallback(() => {
+  useEffect(() => {
+    if (isOpen && !images.length && !isFetching) {
+      fetchImages()
+    }
+  }, [isOpen, images, fetchImages])
+
+  useEffect(() => {
+    if (isOpen && isFetchError) {
+      handleClose()
+    }
+  }, [isOpen, isFetchError, handleClose])
+
+  const fetchImages = useCallback(() => {
     const postID = document
       .querySelector('link[rel=canonical]')
       .href.match(/(\d*$)/)[0]
 
     setIsFetching(true)
+    setIsFetchError(false)
     fetchImagesByPostID(postID)
       .then(() => {
         setIsFetching(false)
       })
       .catch(() => {
-        setIsFetching(false)
-        setIsOpen(false)
-        looseBody()
+        setIsFetchError(true)
       })
 
     setIsOpen(true)
     fixBody()
   }, [fetchImagesByPostID])
+
+  const handleOpen = useCallback(() => {
+    setIsOpen(true)
+    fixBody()
+  }, [])
 
   const handleClose = useCallback(() => {
     looseBody()
