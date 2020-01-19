@@ -128,13 +128,13 @@ const Gallery = ({
     >
       {state => (
         <Backdrop style={transitionStyles[state]}>
-          <CloseBtn onClick={onClose}>
+          <CloseBtn onClick={onClose} data-t="Gallery__CloseBtn">
             <FontAwesomeIcon icon={faTimesCircle} />
           </CloseBtn>
-          <ReloadBtn onClick={handleReload}>
+          <ReloadBtn onClick={handleReload} data-t="Gallery__ReloadBtn">
             <FontAwesomeIcon icon={faRedo} />
           </ReloadBtn>
-          <ImageGridContainer>
+          <ImageGridContainer data-t="Gallery__ImageGridContainer">
             {images.map((imageData, i) => (
               <ImageItem
                 key={i}

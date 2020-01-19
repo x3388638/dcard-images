@@ -123,7 +123,7 @@ const Carousel = ({ images, index, onClose }) => {
     currentIndex
   ]
   return (
-    <Conatienr>
+    <Conatienr data-t="Carousel">
       <Label gender={gender}>
         <BackBtn onClick={onClose}>
           <FontAwesomeIcon icon={faAngleLeft} />
