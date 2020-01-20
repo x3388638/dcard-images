@@ -1,28 +1,38 @@
-/* global Feature, Scenario */
-const fs = require('fs')
-const path = require('path')
-const jsToInject = fs.readFileSync(
-  path.resolve(__dirname, '../index.user.js'),
-  { encoding: 'utf8' }
-)
-
 Feature('dcard-images')
 
-Scenario('Browse the images', I => {
-  I.amOnPage('https://www.dcard.tw/f/vehicle/p/225620752')
-  I.waitForElement('article h1')
-  I.executeScript(js => {
-    eval(js)
-  }, jsToInject)
-  I.wait(2)
-  I.seeElement('#dcard-images-root [class^=BrowseBtn_]')
+const el = {
+  root: { css: '#dcard-images-root' },
+  BrowseBtn: { css: '[class*=BrowseBtn_]' },
+  CloseBtn: { css: '[class*=Gallery__CloseBtn]' },
+  ReloadBtn: { css: '[class*=Gallery__ReloadBtn]' },
+  firstGrid: { css: '[class*=Gallery__ImageGridContainer] > div' },
+  Carousel: { css: '[class*=Carousel_]' }
+}
+
+Scenario('Inject userscript and render the BrowseBtn', I => {
+  I.amOnSamplePageAndInjectJS()
+  I.seeElement(locate(el.root).find(el.BrowseBtn))
   I.saveScreenshot('BrowseBtn.png')
-  I.click('#dcard-images-root [class^=BrowseBtn_]')
+})
+
+Scenario('Click the BrowseBtn to open Gallery', I => {
+  I.amOnSamplePageAndInjectJS()
+  I.click(locate(el.root).find(el.BrowseBtn))
   I.wait(2)
-  I.seeElement('[data-t=Gallery__CloseBtn]')
-  I.seeElement('[data-t=Gallery__ReloadBtn]')
-  I.seeElement('[data-t=Gallery__ImageGridContainer] > div')
+  I.seeElement(locate(el.root).find(el.CloseBtn))
+  I.seeElement(locate(el.root).find(el.ReloadBtn))
+  I.seeElement(locate(el.root).find(el.firstGrid))
   I.saveScreenshot('Gallery.png')
-  I.click('[data-t=Gallery__ImageGridContainer] > div')
-  I.seeElement('[data-t=Carousel] img')
+})
+
+Scenario('Click Gallery image to open Carousel', I => {
+  I.amOnSamplePageAndInjectJS()
+  I.click(locate(el.root).find(el.BrowseBtn))
+  I.wait(2)
+  I.click(locate(el.root).find(el.firstGrid))
+  I.seeElement(
+    locate(el.root)
+      .find(el.Carousel)
+      .find('img')
+  )
 })

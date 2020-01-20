@@ -9,7 +9,7 @@ exports.config = {
   output: './__e2e__/output',
   helpers: {
     Puppeteer: {
-      url: '',
+      url: 'https://www.dcard.tw',
       show: false,
       windowSize: '1600x800'
     }
