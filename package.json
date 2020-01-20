@@ -1,6 +1,6 @@
 {
   "name": "dcard-images",
-  "version": "0.2.6",
+  "version": "1.0.4",
   "description": "Dcard gallery for all images in the article and comments",
   "main": "index.js",
   "scripts": {
