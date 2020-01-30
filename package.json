@@ -1,6 +1,6 @@
 {
   "name": "dcard-images",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Dcard gallery for all images in the article and comments",
   "main": "index.js",
   "scripts": {
@@ -71,6 +71,7 @@
     "intersection-observer": "^0.7.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
+    "react-grid-carousel": "^0.1.6",
     "react-transition-group": "^4.3.0",
     "styled-components": "^4.4.1"
   }

@@ -13,9 +13,14 @@ const Item = styled.div`
   background-image: ${({ img }) => `url(${img})`};
   transition: box-shadow 0.2s;
   position: relative;
+  margin: 5px;
 
   &:hover {
     box-shadow: 0 0 10px 0px #f3f3f3;
+  }
+
+  @media screen and (min-width: 1400px) {
+    height: 250px;
   }
 `
 

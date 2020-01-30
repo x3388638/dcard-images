@@ -7,6 +7,7 @@ import {
   faSpinner
 } from '@fortawesome/free-solid-svg-icons'
 import { Transition } from 'react-transition-group'
+import ImageGrids from 'react-grid-carousel'
 import Carousel from './Carousel'
 import ImageItem from './ImageItem'
 
@@ -51,31 +52,6 @@ const ReloadBtn = styled(ToolBtn)`
   top: 50px;
 `
 
-const ImageGridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-gap: 20px;
-  margin: 50px 0;
-
-  @media screen and (max-width: 1480px) {
-    & {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  @media screen and (max-width: 1024px) {
-    & {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  @media screen and (max-width: 768px) {
-    & {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-`
-
 const rotate = keyframes`
   from {
     transform: rotate(0deg);
@@ -93,7 +69,7 @@ const Loading = styled.div`
   animation: ${rotate} 1s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
   color: #f3f3f3;
   font-size: 24px;
-  height: 175px;
+  height: 100%;
 `
 
 const Gallery = ({
@@ -134,23 +110,32 @@ const Gallery = ({
           <ReloadBtn onClick={handleReload}>
             <FontAwesomeIcon icon={faRedo} />
           </ReloadBtn>
-          <ImageGridContainer>
+          <ImageGrids
+            cols={4}
+            rows={Math.ceil((images.length + (isFetching ? 1 : 0)) / 4)}
+            gap={0}
+            containerStyle={{ margin: '50px 0' }}
+          >
             {images.map((imageData, i) => (
-              <ImageItem
-                key={i}
-                reload={reload}
-                imageData={imageData}
-                onClick={() => {
-                  setCarouselIndex(i)
-                }}
-              />
+              <ImageGrids.Item key={i}>
+                <ImageItem
+                  key={i}
+                  reload={reload}
+                  imageData={imageData}
+                  onClick={() => {
+                    setCarouselIndex(i)
+                  }}
+                />
+              </ImageGrids.Item>
             ))}
             {isFetching && (
-              <Loading>
-                <FontAwesomeIcon icon={faSpinner} />
-              </Loading>
+              <ImageGrids.Item>
+                <Loading>
+                  <FontAwesomeIcon icon={faSpinner} />
+                </Loading>
+              </ImageGrids.Item>
             )}
-          </ImageGridContainer>
+          </ImageGrids>
           {carouselIndex !== null && (
             <Carousel
               onClose={closeCarousel}
