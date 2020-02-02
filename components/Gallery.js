@@ -1,11 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faTimesCircle,
-  faRedo,
-  faSpinner
-} from '@fortawesome/free-solid-svg-icons'
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { Transition } from 'react-transition-group'
 import ImageGrids from 'react-grid-carousel'
 import Carousel from './Carousel'
@@ -48,28 +44,38 @@ const CloseBtn = styled(ToolBtn)`
   top: 10px;
 `
 
-const ReloadBtn = styled(ToolBtn)`
-  top: 50px;
-`
-
-const rotate = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
+const pulse = keyframes`
+  0% { opacity: 0.1 }
+  50% { opacity: 1 }
+  60% { opacity: 1 }
+  100% { opacity: 0.1 }
 `
 
 const Loading = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: ${rotate} 1s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
   color: #f3f3f3;
   font-size: 24px;
   height: 100%;
+
+  span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #f3f3f3;
+    border-radius: 50%;
+    margin: 0 5px;
+    animation: ${pulse} 1s cubic-bezier(0.65, 0.05, 0.36, 1) infinite;
+
+    &.nd {
+      animation-delay: 0.2s;
+    }
+
+    &.rd {
+      animation-delay: 0.4s;
+    }
+  }
 `
 
 const Gallery = ({
@@ -78,11 +84,7 @@ const Gallery = ({
   images = [],
   onClose
 }) => {
-  const [reload, setReload] = useState(0)
   const [carouselIndex, setCarouselIndex] = useState(null)
-  const handleReload = useCallback(() => {
-    setReload(c => c + 1)
-  }, [])
 
   const closeCarousel = useCallback(() => {
     setCarouselIndex(null)
@@ -94,6 +96,8 @@ const Gallery = ({
     exiting: { opacity: 0 },
     exited: { opacity: 0 }
   }
+
+  const itemAmount = images.length + (isFetching ? 1 : 0)
 
   return (
     <Transition
@@ -107,35 +111,47 @@ const Gallery = ({
           <CloseBtn onClick={onClose}>
             <FontAwesomeIcon icon={faTimesCircle} />
           </CloseBtn>
-          <ReloadBtn onClick={handleReload}>
-            <FontAwesomeIcon icon={faRedo} />
-          </ReloadBtn>
-          <ImageGrids
-            cols={4}
-            rows={Math.ceil((images.length + (isFetching ? 1 : 0)) / 4)}
-            gap={0}
-            containerStyle={{ margin: '50px 0' }}
-          >
-            {images.map((imageData, i) => (
-              <ImageGrids.Item key={i}>
-                <ImageItem
-                  key={i}
-                  reload={reload}
-                  imageData={imageData}
-                  onClick={() => {
-                    setCarouselIndex(i)
-                  }}
-                />
-              </ImageGrids.Item>
-            ))}
-            {isFetching && (
-              <ImageGrids.Item>
-                <Loading>
-                  <FontAwesomeIcon icon={faSpinner} />
-                </Loading>
-              </ImageGrids.Item>
-            )}
-          </ImageGrids>
+          {itemAmount && (
+            <ImageGrids
+              cols={4}
+              rows={Math.ceil(itemAmount / 4)}
+              gap={0}
+              containerStyle={{ margin: '50px 0' }}
+              responsiveLayout={[
+                {
+                  breakpoint: 999,
+                  cols: 3,
+                  rows: Math.ceil(itemAmount / 3)
+                },
+                {
+                  breakpoint: 767,
+                  cols: 2,
+                  rows: Math.ceil(itemAmount / 2)
+                }
+              ]}
+              mobileBreakpoint={0}
+            >
+              {images.map((imageData, i) => (
+                <ImageGrids.Item key={i}>
+                  <ImageItem
+                    imageData={imageData}
+                    onClick={() => {
+                      setCarouselIndex(i)
+                    }}
+                  />
+                </ImageGrids.Item>
+              ))}
+              {isFetching && (
+                <ImageGrids.Item>
+                  <Loading>
+                    <span className="st" />
+                    <span className="nd" />
+                    <span className="rd" />
+                  </Loading>
+                </ImageGrids.Item>
+              )}
+            </ImageGrids>
+          )}
           {carouselIndex !== null && (
             <Carousel
               onClose={closeCarousel}

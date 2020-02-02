@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         dcard-images
 // @namespace    https://2yc.tw
-// @version      1.0.5
+// @version      1.0.6
 // @description  Dcard gallery to browse all images in both article and comments
 // @author       Y.Y.
 // @match        https://www.dcard.tw/*

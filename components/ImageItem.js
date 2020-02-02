@@ -18,10 +18,6 @@ const Item = styled.div`
   &:hover {
     box-shadow: 0 0 10px 0px #f3f3f3;
   }
-
-  @media screen and (min-width: 1400px) {
-    height: 250px;
-  }
 `
 
 const Label = styled.span`
@@ -40,7 +36,7 @@ const Label = styled.span`
   }
 `
 
-const ImageItem = ({ imageData, reload, onClick }) => {
+const ImageItem = ({ imageData, onClick }) => {
   const [isIntersected, setIsIntersected] = useState(false)
   const itemRef = useRef(null)
   const { observe, disconnect, entries } = useIntersectionObserver()
@@ -65,7 +61,7 @@ const ImageItem = ({ imageData, reload, onClick }) => {
   return (
     <Item
       ref={itemRef}
-      img={isIntersected ? `${img}?_=${reload}` : defaultImg}
+      img={isIntersected ? img : defaultImg}
       onClick={onClick}
     >
       <Label gender={gender}>

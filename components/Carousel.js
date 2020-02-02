@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-  faAngleLeft,
-  faCaretLeft,
-  faCaretRight
-} from '@fortawesome/free-solid-svg-icons'
+import { faAngleLeft, faCaretLeft } from '@fortawesome/free-solid-svg-icons'
 
 const Conatienr = styled.div`
   width: 100%;
@@ -97,6 +93,7 @@ const PrevBtn = styled(btnBase)`
 
 const NextBtn = styled(btnBase)`
   right: 50px;
+  transform: translateY(-50%) rotate(180deg);
 `
 
 const Carousel = ({ images, index, onClose }) => {
@@ -108,20 +105,19 @@ const Carousel = ({ images, index, onClose }) => {
 
   const handleIndex = amount => {
     let nextPage = currentIndex + amount
-    if (nextPage >= images.length) {
-      nextPage = 0
-    }
-
-    if (nextPage < 0) {
-      nextPage = images.length - 1
-    }
-
-    setCurrentIndex(nextPage)
+    setCurrentIndex(
+      nextPage >= images.length
+        ? 0
+        : nextPage < 0
+        ? images.length - 1
+        : nextPage
+    )
   }
 
   const { floor, host, school, department, createdAt, gender, img } = images[
     currentIndex
   ]
+
   return (
     <Conatienr>
       <Label gender={gender}>
@@ -143,7 +139,7 @@ const Carousel = ({ images, index, onClose }) => {
         <FontAwesomeIcon icon={faCaretLeft} />
       </PrevBtn>
       <NextBtn onClick={() => handleIndex(1)}>
-        <FontAwesomeIcon icon={faCaretRight} />
+        <FontAwesomeIcon icon={faCaretLeft} />
       </NextBtn>
       <Index>
         {currentIndex + 1} / {images.length}
