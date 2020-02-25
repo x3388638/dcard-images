@@ -1,13 +1,14 @@
 {
   "name": "dcard-images",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Dcard gallery for all images in the article and comments",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack && cat meta.js index.user.js > temp && mv temp index.user.js",
-    "prettier:check": "prettier --check ./**/*.{js,json,css} && echo \"✅ Prettier validated\"",
-    "prettier:write": "prettier --write ./**/*.{js,json,css}",
+    "prettier:check": "prettier --check './**/*.{js,json,css}' && echo \"✅ Prettier validated\"",
+    "prettier:write": "prettier --write './**/*.{js,json,css}'",
+    "stylelint": "stylelint './{components,stories}/**/*.js' && echo \"✅ Stylelint validated\"",
     "lint": "eslint './**/*.js'",
     "lint:fix": "eslint './**/*.js' --fix",
     "storybook": "start-storybook -p 6006",
@@ -44,6 +45,11 @@
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
     "puppeteer": "^2.0.0",
+    "stylelint": "^13.2.0",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-config-standard": "^20.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.10.0",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },
@@ -53,6 +59,7 @@
       "git add"
     ],
     "*.js": [
+      "npm run stylelint",
       "npm run lint",
       "git add"
     ]

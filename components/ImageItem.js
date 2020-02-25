@@ -16,7 +16,7 @@ const Item = styled.div`
   margin: 5px;
 
   &:hover {
-    box-shadow: 0 0 10px 0px #f3f3f3;
+    box-shadow: 0 0 10px 0 #f3f3f3;
   }
 `
 

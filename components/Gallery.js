@@ -45,10 +45,10 @@ const CloseBtn = styled(ToolBtn)`
 `
 
 const pulse = keyframes`
-  0% { opacity: 0.1 }
-  50% { opacity: 1 }
-  60% { opacity: 1 }
-  100% { opacity: 0.1 }
+  0% { opacity: 0.1; }
+  50% { opacity: 1; }
+  60% { opacity: 1; }
+  100% { opacity: 0.1; }
 `
 
 const Loading = styled.div`
