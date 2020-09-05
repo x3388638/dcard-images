@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react'
+import ReactDOM from 'react-dom'
 import styled, { keyframes } from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
@@ -99,7 +100,7 @@ const Gallery = ({
 
   const itemAmount = images.length + (isFetching ? 1 : 0)
 
-  return (
+  return ReactDOM.createPortal(
     <Transition
       in={isOpen}
       timeout={{ enter: 0, exit: 225 }}
@@ -161,7 +162,8 @@ const Gallery = ({
           )}
         </Backdrop>
       )}
-    </Transition>
+    </Transition>,
+    document.body
   )
 }
 

@@ -18,8 +18,8 @@ Scenario('Click the BrowseBtn to open Gallery', I => {
   I.amOnSamplePageAndInjectJS()
   I.click(locate(el.root).find(el.BrowseBtn))
   I.wait(2)
-  I.seeElement(locate(el.root).find(el.CloseBtn))
-  I.seeElement(locate(el.root).find(el.Grid))
+  I.seeElement(el.CloseBtn)
+  I.seeElement(el.Grid)
   I.saveScreenshot('Gallery.png')
 })
 
@@ -27,10 +27,6 @@ Scenario('Click Gallery image to open Carousel', I => {
   I.amOnSamplePageAndInjectJS()
   I.click(locate(el.root).find(el.BrowseBtn))
   I.wait(2)
-  I.click(locate(el.root).find(el.Grid))
-  I.seeElement(
-    locate(el.root)
-      .find(el.Carousel)
-      .find('img')
-  )
+  I.click(el.Grid)
+  I.seeElement(locate(el.Carousel).find('img'))
 })

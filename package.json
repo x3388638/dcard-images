@@ -1,10 +1,9 @@
 {
   "name": "dcard-images",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "Dcard gallery for all images in the article and comments",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack && cat meta.js index.user.js > temp && mv temp index.user.js",
     "prettier:check": "prettier --check './**/*.{js,json,css}' && echo \"✅ Prettier validated\"",
     "prettier:write": "prettier --write './**/*.{js,json,css}'",
